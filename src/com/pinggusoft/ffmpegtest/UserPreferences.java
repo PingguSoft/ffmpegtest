@@ -25,6 +25,7 @@ public class UserPreferences {
         //return preferences.getString(KEY_URL, "rtsp://192.168.100.1:554/cam1/h264");
         //return preferences.getString(KEY_URL, "rtsp://mm2.pcslab.com/mm/7h2000.mp4");
         //return "rtsp://mm2.pcslab.com/mm/7h2000.mp4";
-        return "rtsp://192.168.100.1:554/cam1/h264";
+        //return "rtsp://192.168.100.1:554/cam1/h264";
+        return "http://192.168.100.1/video.cgi?identify_key=461127346&amp;pipe=0";
     }
 }

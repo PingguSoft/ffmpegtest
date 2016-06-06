@@ -161,7 +161,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 */
 		
 		mVideoView = this.findViewById(R.id.video_view);
-		mMpegPlayer = new FFmpegPlayer((FFmpegDisplay) mVideoView, this);
+		mMpegPlayer = new FFmpegPlayer((FFmpegDisplay) mVideoView); //, this);
 		mMpegPlayer.setMpegListener(this);
 		setDataSource();
 	}
