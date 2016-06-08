@@ -161,7 +161,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 */
 		
 		mVideoView = this.findViewById(R.id.video_view);
-		mMpegPlayer = new FFmpegPlayer((FFmpegDisplay) mVideoView); //, this);
+		mMpegPlayer = new FFmpegPlayer((FFmpegDisplay) mVideoView, FFmpegPlayer.AV_LOG_DEBUG); //, this);
 		mMpegPlayer.setMpegListener(this);
 		setDataSource();
 	}
@@ -220,6 +220,13 @@ public class VideoActivity extends Activity implements OnClickListener,
 */		
 		mPlay = false;
 
+        params.put("analyzeduration", "30000");
+        params.put("probesize", "30000");
+        //params.put("fpsprobesize", "5");
+        params.put("nobuffer", "1");
+        params.put("max_delay", "50000");
+        params.put("flush_packets", "1");		
+		
 		mMpegPlayer.setDataSource(url, params, FFmpegPlayer.UNKNOWN_STREAM, mAudioStreamNo,
 				mSubtitleStreamNo);
 		resumePause();
@@ -439,4 +446,3 @@ public class VideoActivity extends Activity implements OnClickListener,
 	}
 
 }
-
