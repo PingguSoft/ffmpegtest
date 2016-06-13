@@ -19,6 +19,10 @@
 package com.pinggusoft.ffmpegtest;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -32,13 +36,17 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.OnScanCompletedListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -84,6 +92,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 	private int mSubtitleStreamNo = FFmpegPlayer.NO_STREAM;
 	//private View mScaleButton;
 	private long mCurrentTimeUs;
+	private int  mCaptureCnt = 0;
 	
 
    @SuppressLint("NewApi")
@@ -121,7 +130,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		this.setContentView(R.layout.video_surfaceview);
-
+		
 /*		
 		mSeekBar = (SeekBar) this.findViewById(R.id.seek_bar);
 		mSeekBar.setOnSeekBarChangeListener(this);
@@ -220,7 +229,7 @@ public class VideoActivity extends Activity implements OnClickListener,
 */		
 		mPlay = false;
 
-        params.put("analyzeduration", "30000");
+        params.put("analyzeduration", "40000");
         params.put("probesize", "30000");
         //params.put("fpsprobesize", "5");
         params.put("nobuffer", "1");
@@ -445,4 +454,37 @@ public class VideoActivity extends Activity implements OnClickListener,
 		// play();
 	}
 
+
+    @Override
+    public void onVideoSizeChanged(int width, int height) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void onClickCapture(View v) {
+        Bitmap bmFrame = mMpegPlayer.captureVideoFrame();
+        
+        String mPath = String.format("%s/Pictures/capture_%08d.jpg", Environment.getExternalStorageDirectory().toString(), mCaptureCnt++);
+        OutputStream fout = null;
+        File imageFile = new File(mPath);
+
+        try {
+            fout = new FileOutputStream(imageFile);
+            bmFrame.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            fout.flush();
+            fout.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        MediaScannerConnection.scanFile(getApplicationContext(), new String[]{mPath}, null,
+                new OnScanCompletedListener() {
+                   @Override
+                   public void onScanCompleted(String path, Uri uri) {
+                      Log.i("ffmpegtest", "file " + path + " was scanned seccessfully: " + uri);
+                   }
+                });        
+    }
 }
